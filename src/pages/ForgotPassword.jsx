@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate, Link } from "react-router-dom";
 import { FiUser, FiLock, FiHelpCircle, FiArrowLeft, FiLogIn, FiAlertCircle } from "react-icons/fi";
@@ -10,12 +10,27 @@ const ForgotPassword = () => {
     securityAnswer: "",
     newPassword: "",
   });
+  const [securityQuestion, setSecurityQuestion] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { message, forgotPassword } = useAuth();
+  const { message, forgotPassword, getSecurityQuestion } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) =>
+  // Cuando cambia el username, busca la pregunta de seguridad
+  useEffect(() => {
+    const fetchSecurityQuestion = async () => {
+      if (form.username.length > 2) {
+        const question = await getSecurityQuestion(form.username);
+        setSecurityQuestion(question || "");
+      } else {
+        setSecurityQuestion("");
+      }
+    };
+    fetchSecurityQuestion();
+  }, [form.username, getSecurityQuestion]);
+
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -66,6 +81,13 @@ const ForgotPassword = () => {
                 />
               </div>
             </div>
+
+            {/* Mostrar pregunta de seguridad si existe */}
+            {securityQuestion && (
+              <div className="mb-2 font-semibold text-gray-700">
+                Pregunta de seguridad: {securityQuestion}
+              </div>
+            )}
             
             {/* Respuesta de seguridad */}
             <div>
