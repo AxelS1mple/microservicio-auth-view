@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const API_URL = "http://localhost:5005/api/LibroMaterial";
+const API_URL = "https://www.miapilibreriamateriales.somee.com/api/LibroMaterial";
 
 export const useLibros = () => {
   const [libros, setLibros] = useState([]);
