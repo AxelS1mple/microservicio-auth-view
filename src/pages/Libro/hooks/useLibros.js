@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const API_URL = "https://miapilibroautormysqltoken.somee.com";
+const API_URL = "https://miapilibroautormysqltoken.somee.com/api/LibroMaterial";
 
 export const useLibros = () => {
   const [libros, setLibros] = useState([]);
