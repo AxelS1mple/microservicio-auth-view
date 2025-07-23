@@ -9,10 +9,8 @@ export const useAuth = () => {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    // Establecer el token actual como default
     axios.defaults.headers.common['Authorization'] = token ? `Bearer ${token}` : "";
 
-    // Interceptor de respuestas para detectar 401 y refrescar
     const responseInterceptor = axios.interceptors.response.use(
       response => response,
       async error => {
@@ -30,7 +28,7 @@ export const useAuth = () => {
             originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
             return axios(originalRequest);
           } else {
-            await logout(); // fuerza logout si el refresh falla
+            await logout();
           }
         }
 
