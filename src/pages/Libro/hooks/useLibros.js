@@ -1,42 +1,36 @@
 import { useState, useEffect } from "react";
 
-const API_URL = "https://www.miapilibreriamateriales.somee.com/api/LibroMaterial";
+const API_URL = "https://localhost:7103/api/LibroMaterial";
 
 export const useLibros = () => {
   const [libros, setLibros] = useState([]);
   const [loading, setLoading] = useState(true);
   const [servidor, setServidor] = useState(null);
+  const token = localStorage.getItem("token"); // ⬅️ Leer el token guardado
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`,
+  };
 
   const obtenerLibros = () => {
     setLoading(true);
-    fetch(API_URL)
+    fetch(API_URL, { headers }) // ⬅️ Usar token aquí
       .then((res) => {
+        if (res.status === 401) throw new Error("No autorizado");
         if (!res.ok) throw new Error("Error al obtener libros");
         return res.json();
       })
       .then((data) => {
-        // ✅ Extraemos solo el arreglo "libros" del JSON de respuesta
         const lista = Array.isArray(data.libros) ? data.libros : [];
         setServidor(data.servidor || null);
         setLibros(lista);
       })
       .catch((err) => {
-        console.error("Error:", err);
-        setLibros([]); // ❗Evitar que libros quede en null u objeto
+        alert(err.message); // ⬅️ Mostrar alerta
+        setLibros([]);
       })
       .finally(() => setLoading(false));
-  };
-
-  const obtenerLibroPorId = async (id) => {
-    try {
-      const res = await fetch(`${API_URL}/${id}`);
-      if (!res.ok) throw new Error("Error al obtener el libro");
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error("Error:", error);
-      return null;
-    }
   };
 
   const insertarLibro = async (formData) => {
@@ -48,10 +42,11 @@ export const useLibros = () => {
 
     const res = await fetch(API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(payload),
     });
 
+    if (res.status === 401) return alert("No autorizado");
     if (!res.ok) throw new Error("Error al insertar libro");
     obtenerLibros();
   };
@@ -66,10 +61,11 @@ export const useLibros = () => {
 
     const res = await fetch(`${API_URL}/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(payload),
     });
 
+    if (res.status === 401) return alert("No autorizado");
     if (!res.ok) throw new Error("Error al actualizar libro");
     obtenerLibros();
   };
@@ -77,8 +73,10 @@ export const useLibros = () => {
   const eliminarLibro = async (id) => {
     const res = await fetch(`${API_URL}/${id}`, {
       method: "DELETE",
+      headers,
     });
 
+    if (res.status === 401) return alert("No autorizado");
     if (!res.ok) throw new Error("Error al eliminar libro");
     obtenerLibros();
   };
@@ -92,7 +90,6 @@ export const useLibros = () => {
     loading,
     servidor,
     obtenerLibros,
-    obtenerLibroPorId,
     insertarLibro,
     actualizarLibro,
     eliminarLibro,
