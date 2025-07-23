@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const API_URL = "http://localhost:5182/api/LibroAutor";
+const API_URL = "https://www.miapilibreriamaterialesautortokenpostgree.somee.com/swagger/index.html";
 
 export const useAutores = () => {
   const [autores, setAutores] = useState([]);
