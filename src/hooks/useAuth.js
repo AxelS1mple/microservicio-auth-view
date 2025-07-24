@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 
-const API_URL = "https://microservicio-auth-xn3l.onrender.com/api/auth";
+const API_URL = "https://microservicio-auth-xn3l.onrender.com";
 
 export const useAuth = () => {
   const { token, login: setTokenContext, logout: logoutContext } = useContext(AuthContext);
